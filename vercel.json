@@ -10,10 +10,6 @@
     {
       "src": "Backend/ai/app.py",
       "use": "@vercel/python"
-    },
-    {
-      "src": "Frontend/index.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -26,8 +22,12 @@
       "dest": "/Backend/ai/app.py"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/Frontend/$1"
+      "dest": "/index.html"
     }
   ]
 }
