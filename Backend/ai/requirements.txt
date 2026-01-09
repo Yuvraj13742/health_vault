@@ -4,11 +4,7 @@ psycopg2-binary
 python-dotenv
 PyJWT
 google-generativeai
-SpeechRecognition
-pyttsx3
 dateparser
 waitress
-google-api-python-client
 google-auth
-google-auth-oauthlib
 google-auth-httplib2
