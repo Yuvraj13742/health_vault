@@ -1,7 +1,4 @@
 {
-  "installCommand": "npm install --prefix Frontend && npm install --prefix Backend && pip install -r Backend/ai/requirements.txt",
-  "buildCommand": "npm run build --prefix Frontend",
-  "outputDirectory": "Frontend/dist",
   "builds": [
     {
       "src": "Backend/app.js",
@@ -10,6 +7,13 @@
     {
       "src": "Backend/ai/app.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "Frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
@@ -22,8 +26,7 @@
       "dest": "/Backend/ai/app.py"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
