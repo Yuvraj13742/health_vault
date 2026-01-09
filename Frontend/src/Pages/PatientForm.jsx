@@ -1,19 +1,19 @@
 import React from 'react'
 import Header from '../components/PatientForm/Header'
-import Form from '../components/PatientForm/form'
+import Form from '../components/PatientForm/Form'
 import Footer from '../components/Navbar/Footer'
 
 const PatientForm = () => {
   return (
     <div>
-        
 
 
 
 
-        <Header/>
-        <Form/>
-        <Footer/>
+
+      <Header />
+      <Form />
+      <Footer />
     </div>
   )
 }
