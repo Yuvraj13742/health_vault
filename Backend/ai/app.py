@@ -106,7 +106,7 @@ def auth_test():
         "role": g.user.get('role')
     })
 
-@app.route("/disease_prediction", methods=["POST"])
+@app.route("/ai/disease_prediction", methods=["POST"])
 def disease_prediction():
     try:
         data = request.json
@@ -135,7 +135,7 @@ def disease_prediction():
 
 
 # ✅ AI-Powered Medical Record Retrieval
-@app.route("/ask_question", methods=["POST"])
+@app.route("/ai/ask_question", methods=["POST"])
 @auth_middleware(["student"])
 def ask_question():
     try:
@@ -214,7 +214,7 @@ def ask_question():
         traceback.print_exc()
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-@app.route("/leaverelated", methods=["POST"])
+@app.route("/ai/leaverelated", methods=["POST"])
 @auth_middleware(["student"])
 def leave_related_question():
     try:
@@ -267,7 +267,7 @@ def leave_related_question():
     
 
 # ✅ AI-Powered Doctor Insights (Secure)
-@app.route("/doctor_insights", methods=["POST"])
+@app.route("/ai/doctor_insights", methods=["POST"])
 @auth_middleware(["doctor"])
 def doctor_insights():
     try:
