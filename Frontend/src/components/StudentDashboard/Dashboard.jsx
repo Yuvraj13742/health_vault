@@ -206,7 +206,7 @@ const Dashboard = () => {
 
       await api.delete(`/health-record/${id}/delete`);
       alert("Health record deleted successfully.");
-      setHealthRecords(healthRecords.filter((record) => record._id !== id));
+      setHealthRecords(healthRecords.filter((record) => record.id !== id));
     } catch (err) {
       console.error("Error deleting health record:", err);
       alert("Failed to delete health record.");
@@ -576,7 +576,7 @@ const Dashboard = () => {
                   </thead>
                   <tbody>
                     {healthRecords.map((record, index) => (
-                      <tr key={record._id} className="hover:bg-white/5 transition-colors">
+                      <tr key={record.id} className="hover:bg-white/5 transition-colors">
                         <td className="px-4 py-2 border-b">{index + 1}</td>
                         <td className="px-4 py-2 border-b">{record.diagnosis}</td>
                         <td className="px-4 py-2 border-b">
@@ -584,13 +584,13 @@ const Dashboard = () => {
                         </td>
                         <td className="px-4 py-2 border-b border-white/10">
                           <button
-                            onClick={() => viewHealthRecordDetails(record._id)}
+                            onClick={() => viewHealthRecordDetails(record.id)}
                             className="text-primary hover:underline mr-4"
                           >
                             View
                           </button>
                           <button
-                            onClick={() => deleteHealthRecord(record._id)}
+                            onClick={() => deleteHealthRecord(record.id)}
                             className="text-red-600 hover:underline"
                           >
                             Delete

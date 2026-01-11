@@ -96,48 +96,50 @@ const Sidebar = ({ role }) => {
                 )}
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto py-4 space-y-2 px-3">
-                {currentMenu.map((item) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                        <Link
-                            key={item.name}
-                            to={item.path}
-                            className={`flex items-center px-3 py-3 rounded-xl transition-all duration-300 group ${isActive
-                                ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                : "text-gray-400 hover:bg-white/5 hover:text-white"
-                                }`}
-                        >
-                            <item.icon
-                                className={`w-6 h-6 transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"
+            {/* Scrollable Content (Nav + Logout) */}
+            <div className="flex-1 overflow-y-auto flex flex-col">
+                <nav className="space-y-2 px-3 py-4">
+                    {currentMenu.map((item) => {
+                        const isActive = location.pathname === item.path;
+                        return (
+                            <Link
+                                key={item.name}
+                                to={item.path}
+                                className={`flex items-center px-3 py-3 rounded-xl transition-all duration-300 group ${isActive
+                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                    : "text-gray-400 hover:bg-white/5 hover:text-white"
                                     }`}
-                            />
-                            {!isCollapsed && (
-                                <span className="ml-3 font-medium whitespace-nowrap">
-                                    {item.name}
-                                </span>
-                            )}
-                            {isCollapsed && (
-                                <div className="absolute left-full rounded-md px-2 py-1 ml-6 bg-gray-900 text-white text-sm invisible opacity-0 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 whitespace-nowrap z-50">
-                                    {item.name}
-                                </div>
-                            )}
-                        </Link>
-                    );
-                })}
-            </nav>
+                            >
+                                <item.icon
+                                    className={`w-6 h-6 transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"
+                                        }`}
+                                />
+                                {!isCollapsed && (
+                                    <span className="ml-3 font-medium whitespace-nowrap">
+                                        {item.name}
+                                    </span>
+                                )}
+                                {isCollapsed && (
+                                    <div className="absolute left-full rounded-md px-2 py-1 ml-6 bg-gray-900 text-white text-sm invisible opacity-0 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 whitespace-nowrap z-50">
+                                        {item.name}
+                                    </div>
+                                )}
+                            </Link>
+                        );
+                    })}
+                </nav>
 
-            {/* Footer / Logout */}
-            <div className="p-4 border-t border-white/10">
-                <button
-                    onClick={handleLogout}
-                    className={`flex items-center w-full px-3 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 group ${isCollapsed ? "justify-center" : ""
-                        }`}
-                >
-                    <LogOut className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                    {!isCollapsed && <span className="ml-3 font-medium">Logout</span>}
-                </button>
+                {/* Footer / Logout */}
+                <div className="p-2 mt-auto border-t border-white/10">
+                    <button
+                        onClick={handleLogout}
+                        className={`flex items-center w-full px-3 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 group ${isCollapsed ? "justify-center" : ""
+                            }`}
+                    >
+                        <LogOut className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                        {!isCollapsed && <span className="ml-3 font-medium">Logout</span>}
+                    </button>
+                </div>
             </div>
         </div>
     );

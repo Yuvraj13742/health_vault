@@ -264,7 +264,7 @@ const PrescriptionGenerator = () => {
                     onChange={handleInputChange}
                     className="mt-1 block w-full rounded-md border border-white/20 bg-surface/50 text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2 placeholder-gray-500"
                     placeholder="Dr. Name"
-                    readOnly={selectedAppointment !== ""}
+
                   />
                 </div>
 
@@ -279,7 +279,7 @@ const PrescriptionGenerator = () => {
                     onChange={handleInputChange}
                     className="mt-1 block w-full rounded-md border border-white/20 bg-surface/50 text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2 placeholder-gray-500"
                     placeholder="Patient Name"
-                    readOnly={selectedAppointment !== ""}
+
                   />
                 </div>
 
