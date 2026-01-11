@@ -31,33 +31,52 @@ export const bookAppointment = async (req, res) => {
     // This UTC time actually corresponds to 08:30 IST.
     // Since DB stores "2025-12-07 08:30:00", we must convert 03:00 UTC -> 08:30
 
-    const utcDate = new Date(slotDateTime);
-    const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in ms
-    const istDate = new Date(utcDate.getTime() + istOffset);
-
-    // Format as YYYY-MM-DD HH:MM:SS
-    const istTimestamp = istDate.toISOString()
-      .replace('T', ' ')
-      .substring(0, 19);
+    // Verify timestamp directly (Database stores UTC)
+    const dbTimestamp = new Date(slotDateTime).toISOString().replace('T', ' ').substring(0, 19);
 
     console.log("UTC time from frontend:", slotDateTime);
-    console.log("Converted to IST timestamp for DB:", istTimestamp);
+    console.log("Timestamp for DB query:", dbTimestamp);
 
-    // 1. Check if slot is available and lock it
-    const slotResult = await query(`
-      SELECT id, date_time
+    // Extract date part for optimization (YYYY-MM-DD)
+    const requestDate = new Date(slotDateTime).toISOString().split('T')[0];
+
+    // 1. Fetch all slots for this doctor on this DATE
+    const slotsOnDate = await query(`
+      SELECT id, date_time, is_booked 
       FROM doctor_slots 
       WHERE doctor_id = $1 
-        AND to_char(date_time, 'YYYY-MM-DD HH24:MI:SS') = $2
-        AND is_booked = FALSE
-      FOR UPDATE
-    `, [doctorId, istTimestamp]);
+      AND date_time::date = $2::date
+    `, [doctorId, requestDate]);
 
-    console.log("Found slots:", slotResult.rows);
+    // 2. Find exact match in JS (Robust comparison)
+    const targetTimeStr = new Date(slotDateTime).toISOString();
+    const matchedSlot = slotsOnDate.rows.find(s => {
+      const dbTimeStr = new Date(s.date_time).toISOString();
+      // Compare up to minutes/seconds, ignore sub-millisecond differences if any
+      return dbTimeStr.substring(0, 19) === targetTimeStr.substring(0, 19);
+    });
+
+    if (!matchedSlot) {
+      await query("ROLLBACK");
+      return res.status(400).json({ message: "Time slot not found for this date." });
+    }
+
+    if (matchedSlot.is_booked) {
+      await query("ROLLBACK");
+      return res.status(400).json({ message: "Time slot is already booked." });
+    }
+
+    // 3. Lock the specific slot by ID
+    const slotResult = await query(`
+      SELECT id, date_time 
+      FROM doctor_slots 
+      WHERE id = $1 
+      FOR UPDATE
+    `, [matchedSlot.id]);
 
     if (slotResult.rows.length === 0) {
       await query("ROLLBACK");
-      return res.status(400).json({ message: "Time slot is not available or already booked." });
+      return res.status(400).json({ message: "Slot unavailable (concurrency)." });
     }
 
     const slotId = slotResult.rows[0].id;
@@ -134,11 +153,11 @@ export const bookAppointment = async (req, res) => {
     // 8. Send Email
     try {
       const mailSubject = "📅 New Appointment Request";
-      const mailText = `You have a new appointment request from ${studentDetails.name} on ${istTimestamp}.`;
+      const mailText = `You have a new appointment request from ${studentDetails.name} on ${dbTimestamp} UTC.`;
       const mailHtml = `
         <h3>New Appointment Request</h3>
         <p><strong>Student:</strong> ${studentDetails.name}</p>
-        <p><strong>Date & Time:</strong> ${istTimestamp} IST</p>
+        <p><strong>Date & Time:</strong> ${dbTimestamp} UTC</p>
         <p>Please log in to your dashboard to confirm or cancel this appointment.</p>
       `;
       await sendMail(doctorDetails.email, mailSubject, mailText, mailHtml);
